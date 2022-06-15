@@ -212,19 +212,17 @@ router.post('/pay',verifyToken, async(req, res) => {
         else{
             await Product.findByIdAndUpdate(product._id,{stock:(thisProduct.stock-product.quantity)})
             if(!product[i+1]){
-                dbOrder.paymentId = transactionId;
                 dbOrder.products.forEach(async(product)=>{
                     await Product.findByIdAndUpdate(product._id, {amountOfSales: thisProduct.amountOfSales+product.quantity });
-                })         
-                dbOrder.isPaid = true;
-                await dbOrder.save();
-                // await db.disconnect();
-
-                
-                return res.status(200).json({ message: "Orden pagada con éxito" });
+                })
             }
         }
     })
+    
+    dbOrder.paymentId = transactionId;         
+    dbOrder.isPaid = true;
+    await dbOrder.save();
+    return res.status(200).json({ message: "Orden pagada con éxito" });
 
     
 })
