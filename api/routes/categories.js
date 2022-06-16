@@ -6,7 +6,7 @@ const router = Router();
 
 router.post('/', [verifyToken, isAdmin], async(req,res,next)=>{
     const { categoryText } = req.body;
-
+    //d
     try {
         const newCategory = new Category({name: categoryText});
         await newCategory.save();
