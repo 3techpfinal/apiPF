@@ -2,6 +2,7 @@ import { Router } from "express";
 import Order from "../models/Order.js";
 import Product from "../models/Product.js";
 import {verifyToken, isAdmin} from '../middlewares/authJwt.js';
+import { orderReceipt } from '../controllers/sendMailer.js';
 import User from "../models/User.js";
 import axios from 'axios';
 const router = Router()
@@ -222,6 +223,10 @@ router.post('/pay',verifyToken, async(req, res) => {
     dbOrder.paymentId = transactionId;         
     dbOrder.isPaid = true;
     await dbOrder.save();
+    
+    const buyer = await User.findById(req.userId);
+
+    orderReceipt(dbOrder,buyer)
     return res.status(200).json({ message: "Orden pagada con éxito" });
 
     
